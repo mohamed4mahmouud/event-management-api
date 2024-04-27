@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('v1')->group(function(){
-    Route::apiResource('/Events', EventController::class);
+    Route::apiResource('/events', EventController::class);
     Route::apiResource('events.attendees', AttendeeController::class)->scoped(['attendee' => ' event']);
 });
 
