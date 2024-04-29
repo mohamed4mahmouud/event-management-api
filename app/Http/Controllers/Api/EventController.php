@@ -2,21 +2,27 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+//use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use Illuminate\Routing\Controller;
 
 
 class EventController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index','show']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return EventResource::collection(Event::with('user')->get());
+        return EventResource::collection(Event::with('user')->paginate());
     }
 
     /**
@@ -24,7 +30,8 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        $event = Event::create($request->validated());
+        $eventData = array_merge($request->validated(), ['user_id' => $request->user()->id]);
+        $event = Event::create($eventData);
         return EventResource::make($event);
     }
 
