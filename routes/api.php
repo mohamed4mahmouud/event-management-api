@@ -11,6 +11,7 @@ Route::prefix('v1')->group(function(){
     Route::apiResource('/events', EventController::class);
     Route::apiResource('events.attendees', AttendeeController::class)->scoped()->except('update');
     Route::post('/login', [AuthController::class ,'login']);
+    Route::post('/logout' , [AuthController::class , 'logout'])->middleware('auth:sanctum');
 });
 
 Route::get('/user', function (Request $request) {
