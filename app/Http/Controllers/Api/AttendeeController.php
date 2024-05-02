@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use App\Http\Requests\StoreAttendeeRequest;
 use App\Http\Resources\AttendeeResource;
 use App\Models\Attendee;
 use App\Models\Event;
+use Illuminate\Support\Facades\Gate;
 
 class AttendeeController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index','show']);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -41,6 +47,10 @@ class AttendeeController extends Controller
      */
     public function destroy(Event $event , Attendee $attendee)
     {
+        if(Gate::denies('delete-attendee', [$event , $attendee])){
+            abort(403 , 'You are not authorized to delete this attendee');
+        }
+
         $attendee->delete();
         return response()->noContent();
     }

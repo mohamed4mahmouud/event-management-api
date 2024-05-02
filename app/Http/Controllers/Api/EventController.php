@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Gate;
 
 
 class EventController extends Controller
@@ -49,6 +50,10 @@ class EventController extends Controller
      */
     public function update(UpdateEventRequest $request, Event $event)
     {
+        if(Gate::denies('update-event', $event)){
+            abort(403 , 'You are not authorized to update this event');
+        }
+
         $event->update($request->validated());
 
         return EventResource::make($event);
@@ -60,6 +65,11 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+
+        if(Gate::denies('update-event', $event)){
+            abort(403 , 'You are not authorized to delete this event');
+        }
+        
         $event->delete();
         return response()->noContent();
     }
